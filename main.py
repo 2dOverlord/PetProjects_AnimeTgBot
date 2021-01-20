@@ -151,13 +151,7 @@ async def other_text_to_search(message):
     #Need refactoring
 
     chat_id = message.from_user.id
-
-    if IsSerial:
-        media = 'SERIALS'
-    else:
-        media = 'FILMS'
-
-    content = BOT_FUNCTIONS.find_by_name(media,message.text)
+    content = BOT_FUNCTIONS.find_by_name(message.text)
 
     if isinstance(content, list):
         message_text = ''

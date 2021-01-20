@@ -81,17 +81,20 @@ class AnimeBot:
 
         return content_list
 
-    def find_by_name(self, media, name_to_find):
+    def find_by_name(self, name_to_find):
         """
         Finding film or serial, which title is close to given name
 
         :param name: Name of anime, string
         :return serials: serials whith names like in name_query
         """
-        sql_find_query = text(f'SELECT * FROM {media} '
-                              f'WHERE UPPER(name) LIKE UPPER(\'%{name_to_find}%\')')
+        sql_search_query = text(f'SELECT * FROM \'SERIALS\' '
+                                 f'WHERE UPPER(name) LIKE UPPER(\'%{name_to_find}%\')'
+                                 f'UNION '
+                                 f'SELECT * FROM \'FILMS\' '
+                                 f'WHERE UPPER(name) LIKE UPPER(\'%{name_to_find}%\')')
 
-        content = self.connection.execute(sql_find_query).fetchall()
+        content = self.connection.execute(sql_search_query).fetchall()
         if content:
             content_list = []
             for anime in content:
