@@ -17,7 +17,8 @@ serials_table = Table('SERIALS', metadata,
                      Column('link', String),
                      Column('genre', String),
                      Column('rating', Integer),
-                     Column('description', String))
+                     Column('description', String),
+                     Column('image_url', String))
 
 films_table = Table('FILMS', metadata,
                      Column('id', Integer, primary_key=True),
@@ -25,7 +26,8 @@ films_table = Table('FILMS', metadata,
                      Column('link', String),
                      Column('genre', String),
                      Column('rating', Integer),
-                     Column('description', String))
+                     Column('description', String),
+                     Column('image_url', String))
 
 metadata.create_all(engine)
 
@@ -38,7 +40,8 @@ def filling_serials_table():
                                         link = serial['link'],
                                         genre = serial['genre'],
                                         rating = int(serial['raiting']),
-                                        description = serial['description'])
+                                        description = serial['description'],
+                                        image_url = serial['image'])
 
 def filling_films_table():
     insert_films_stmt = films_table.insert(bind = engine)
@@ -49,7 +52,8 @@ def filling_films_table():
                                       link = film['link'],
                                       genre = film['genre'],
                                       rating = int(film['raiting']),
-                                      description = film['description'])
+                                      description = film['description'],
+                                      image_url = film['image'])
 
 def filling_ongoings():
     insert_serials_stmt = serials_table.insert(bind=engine)
@@ -60,7 +64,8 @@ def filling_ongoings():
                                         link=serial['link'],
                                         genre=serial['genre'],
                                         rating=int(serial['raiting']),
-                                        description=serial['description'])
+                                        description=serial['description'],
+                                        image_url = serial['image'])
 
 
 if __name__ == '__main__':

@@ -49,14 +49,19 @@ def parse_site_page(url):
 
         description = ul_des_div.find('div', {'class':'kino-text'}).find('div').text  # short description
 
+        image = 'http://baza1.animevost.tv' + ul_des_div.find('img')['src']
+
         return_list.append({
             'name':name,
             'link':link,
             'genre':genre,
             'ongoing_status':ongoing_status,
             'raiting':raiting,
-            'description':description
+            'description':description,
+            'image':image
         })
 
     return return_list
+
+
 
