@@ -47,9 +47,12 @@ def parse_site_page(url):
         ul_raiting = div.find('ul')
         raiting = ul_raiting.find('li').text    # rating / 100
 
-        description = ul_des_div.find('div', {'class':'kino-text'}).find('div').text  # short description
-
         image = 'http://baza1.animevost.tv' + ul_des_div.find('img')['src']
+
+        anime_request = get_request(link)
+        anime_soap = BeautifulSoup(anime_request, 'html.parser')
+        description = anime_soap.find('div', {'class': 'kino-desc full-text clearfix noselect'}).text
+
 
         return_list.append({
             'name':name,
@@ -62,6 +65,4 @@ def parse_site_page(url):
         })
 
     return return_list
-
-
 
