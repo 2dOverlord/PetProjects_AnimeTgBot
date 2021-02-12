@@ -1,6 +1,12 @@
 import requests
 from bs4 import BeautifulSoup
 
+GENRES = {'Боевые искусства', 'Война', 'Детектив', 'Драма', 'История', 'Киберпанк', 'Комедии', 'Махо-сёдзё',
+          'Меха', 'Мистика', 'Музыкальный', 'Пародии', 'Повседневность', 'Приключения', 'Романтика', 'Самураи' 
+          'Сёдзё', 'Сёдзё-ай', 'Сёнен', 'Сёнен-ай', 'Спорт', 'Триллер', 'Ужасы', 'Фантастика', 'Фэнтези', 'Школа',
+          'Текущие сезоны (Онгоинги)', 'Этти'
+          }
+
 def get_request(url):
     """
     Getting request from site
@@ -35,34 +41,22 @@ def parse_site_page(url):
         name = a_tag.find('h2').text
         link = a_tag.get('href')       # link on anime
 
-        ul_des_div = div.find('div', {"class": "kino-inner clearfix"})
-        ul_dict = ul_des_div.find('ul')
-        genre = ul_dict.find('a').text  # anime`s genre
-
-        if len(ul_dict.find_all('li')) == 5:
-            ongoing_status = True
-        else:
-            ongoing_status = False  # ongoing or not
-
-        ul_raiting = div.find('ul')
-        raiting = ul_raiting.find('li').text    # rating / 100
-
-        image = 'http://baza1.animevost.tv' + ul_des_div.find('img')['src']
-
         anime_request = get_request(link)
         anime_soap = BeautifulSoup(anime_request, 'html.parser')
-        description = anime_soap.find('div', {'class': 'kino-desc full-text clearfix noselect'}).text
 
-
+        description = anime_soap.find('div', {'class': 'kino-desc full-text clearfix noselect'}).text.replace('\n', '')
+        anime_ul = anime_soap.find('ul', {'class': 'kino-lines ignore-select'})
+        ul_links = anime_ul.find_all('a')
+        genre = ' '.join(a.text for a in ul_links if a.text in GENRES)
+        rating = anime_soap.find('ul', {'class': 'unit-rating'}).find('li').text
+        image_url = 'http://baza1.animevost.tv/' + anime_soap.find('a', {'class':'highslide'}).find('img').get('src')
         return_list.append({
             'name':name,
             'link':link,
             'genre':genre,
-            'ongoing_status':ongoing_status,
-            'raiting':raiting,
+            'rating':rating,
             'description':description,
-            'image':image
+            'image':image_url
         })
 
     return return_list
-

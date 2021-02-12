@@ -39,7 +39,7 @@ def filling_serials_table():
             insert_serials_stmt.execute(name = serial['name'],
                                         link = serial['link'],
                                         genre = serial['genre'],
-                                        rating = int(serial['raiting']),
+                                        rating = int(serial['rating']),
                                         description = serial['description'],
                                         image_url = serial['image'])
 
@@ -51,7 +51,7 @@ def filling_films_table():
             insert_films_stmt.execute(name = film['name'],
                                       link = film['link'],
                                       genre = film['genre'],
-                                      rating = int(film['raiting']),
+                                      rating = int(film['rating']),
                                       description = film['description'],
                                       image_url = film['image'])
 
@@ -63,7 +63,7 @@ def filling_ongoings():
             insert_serials_stmt.execute(name=serial['name'],
                                         link=serial['link'],
                                         genre=serial['genre'],
-                                        rating=int(serial['raiting']),
+                                        rating=int(serial['rating']),
                                         description=serial['description'],
                                         image_url = serial['image'])
 
