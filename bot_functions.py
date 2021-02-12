@@ -56,7 +56,7 @@ class AnimeBot:
         """
 
         sql_random_query = text(f'SELECT * FROM \'{media}\''
-                                f'WHERE genre = \'{genre}\''
+                                f'WHERE genre LIKE \'%{genre}%\''
                                 f'ORDER BY RANDOM() LIMIT 1')
 
         content = self.connection.execute(sql_random_query).fetchone()
@@ -69,7 +69,7 @@ class AnimeBot:
         Save as choose_top10, but you can also enter your genre
         """
         sql_top_10_query = text(f'SELECT * FROM {media} '
-                                f'WHERE genre = \'{genre}\''
+                                f'WHERE genre LIKE \'%{genre}%\''
                                 f'ORDER BY rating DESC LIMIT 10')
 
         top10_content_list = self.connection.execute(sql_top_10_query).fetchall()
