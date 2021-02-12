@@ -121,20 +121,22 @@ class AnimeBot:
 
 def content_to_dict(content: set) -> dict:
     # From set to dict
+    print(content)
     content_dict = {'name': content[1],
                     'link': content[2],
                     'genre': content[3],
                     'rating': content[4],
-                    'description': content[5]}
+                    'description': content[5],
+                    'image_url':content[6]}
 
     return content_dict
 
 
 def content_to_html(content: dict) -> str:
-    html_text = f'<a href=\'{content["link"]}\'>{content["name"]}</a>\n' \
+    html_text = f'[⁠]({content["image_url"]})' \
+                f'[{content["name"]}]({content["link"]})\n' \
                 f'⭐{content["rating"]}\n' \
                 f'📄{content["genre"]}\n' \
-                f'✍{content["description"][0:350] + "..."}\n'
-
+                f'✍{content["description"][0:350] + "..."}\n' 
     return html_text
 

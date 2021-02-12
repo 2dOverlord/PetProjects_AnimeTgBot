@@ -70,7 +70,7 @@ async def random_anime(message):
 
     message_text = content_to_html(content)
 
-    await bot.send_message(chat_id=chat_id, text=message_text, parse_mode='html', disable_web_page_preview=True)
+    await bot.send_message(chat_id=chat_id, text=message_text, parse_mode='html', disable_web_page_preview=False)
 
 
 @dp.message_handler(lambda message: message.text in ['Сериалы по жанрам', 'Фильмы по жанрам'])
@@ -116,7 +116,7 @@ async def random_genre(message):
     message_text = '👇Вот случайный тайтл этого жанра👇\n'
     message_text += content_to_html(content)
 
-    await bot.send_message(chat_id=chat_id, text=message_text, parse_mode='html', disable_web_page_preview=True)
+    await bot.send_message(chat_id=chat_id, text=message_text, parse_mode='markdown', disable_web_page_preview=False)
 
 
 @dp.message_handler(lambda message: message.text in ['Топ фильмов', 'Топ сериалов'])
