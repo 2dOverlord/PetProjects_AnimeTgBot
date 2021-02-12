@@ -137,6 +137,6 @@ def content_to_html(content: dict) -> str:
                 f'[{content["name"]}]({content["link"]})\n' \
                 f'⭐{content["rating"]}\n' \
                 f'📄{content["genre"]}\n' \
-                f'✍{content["description"][0:350] + "..."}\n' 
+                f'✍{content["description"][0:350] + "..."}\n'
     return html_text
 
