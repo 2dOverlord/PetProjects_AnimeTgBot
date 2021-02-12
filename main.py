@@ -2,6 +2,12 @@ from aiogram import Bot, Dispatcher, executor
 import keyboards
 from bot_functions import AnimeBot, content_to_html
 
+GENRES = {'Боевые искусства', 'Война', 'Детектив', 'Драма', 'История', 'Киберпанк', 'Комедии', 'Махо-сёдзё',
+          'Меха', 'Мистика', 'Музыкальный', 'Пародии', 'Повседневность', 'Приключения', 'Романтика', 'Самураи' 
+          'Сёдзё', 'Сёдзё-ай', 'Сёнен', 'Сёнен-ай', 'Спорт', 'Триллер', 'Ужасы', 'Фантастика', 'Фэнтези', 'Школа',
+          'Текущие сезоны (Онгоинги)', 'Этти'
+          }
+
 TOKEN = '1410462743:AAHmabWssHSalBRNIQhQeGpFRqGX6aw7jWo'
 
 bot = Bot(token=TOKEN)
@@ -70,7 +76,7 @@ async def random_anime(message):
 
     message_text = content_to_html(content)
 
-    await bot.send_message(chat_id=chat_id, text=message_text, parse_mode='html', disable_web_page_preview=False)
+    await bot.send_message(chat_id=chat_id, text=message_text, parse_mode='markdown', disable_web_page_preview=False)
 
 
 @dp.message_handler(lambda message: message.text in ['Сериалы по жанрам', 'Фильмы по жанрам'])
@@ -90,8 +96,10 @@ async def media_genres_keyboard(message):
 
 @dp.message_handler(lambda message: message.text in ['Назад к аниме сериалам', 'Назад к аниме фильмам'])
 async def back_to_media_keyboard(message):
+
     chat_id = message.from_user.id
     message_text = '👇Вернулись, что дальше?👇'
+
     if message.text == 'Назад к аниме сериалам':
         reply_markup = keyboards.SerialsKeyboard.keyboard
     else:
@@ -100,14 +108,12 @@ async def back_to_media_keyboard(message):
     await bot.send_message(chat_id=chat_id, text=message_text, reply_markup=reply_markup)
 
 
-@dp.message_handler(lambda message: message.text in ['Боевые искусства', 'Война', 'Детектив', 'Драма', 'Сёдзё',
-                                                     'Сёнен', 'Киберпанк', 'Меха', 'Фантастика', 'История',
-                                                     'Мистика', 'Фэнтези', 'Повседневность', 'Музыкальный',
-                                                     'Романтика', 'Комедии', 'Спорт', 'Приключения',
-                                                     'Триллер', 'Ужасы', 'Школа'])
+@dp.message_handler(lambda message: message.text in GENRES)
 async def random_genre(message):
+
     # Reply random serial, but user choose genre
     chat_id = message.from_user.id
+
     if IsSerial.bol:
         content = BOT_FUNCTIONS.choose_random_by_genre(media='SERIALS', genre=message.text)
     else:
@@ -121,6 +127,7 @@ async def random_genre(message):
 
 @dp.message_handler(lambda message: message.text in ['Топ фильмов', 'Топ сериалов'])
 async def top_media(message):
+
     # Need refactoring
     chat_id = message.from_user.id
 
@@ -130,6 +137,7 @@ async def top_media(message):
         content = BOT_FUNCTIONS.choose_top10('SERIALS')
 
     message_text = ''
+
     for anime in content:
         message_text += f'<a href=\'{anime["link"]}\'>{anime["name"]}</a>\n'
 
@@ -138,16 +146,18 @@ async def top_media(message):
 
 @dp.message_handler(lambda message: message.text == 'Онгоинги')
 async def ongoins(message):
+
     # Need refactoring
     chat_id = message.from_user.id
     content = BOT_FUNCTIONS.select_ongoins()
     message_text = ''
-    for anime in content:
+    for anime in content[:10]:
         message_text += f'<a href=\'{anime["link"]}\'>{anime["name"]}</a>\n'
     await bot.send_message(chat_id=chat_id ,text=message_text, parse_mode='html', disable_web_page_preview=True)
 
 @dp.message_handler()
 async def other_text_to_search(message):
+
     #Need refactoring
 
     chat_id = message.from_user.id
@@ -160,7 +170,7 @@ async def other_text_to_search(message):
     else:
         message_text = content
 
-    await bot.send_message(chat_id=chat_id, text=message_text, parse_mode='html', disable_web_page_preview=True)
+    await bot.send_message(chat_id=chat_id, text=message_text, parse_mode='markdown', disable_web_page_preview=False)
 
 
 if __name__ == '__main__':

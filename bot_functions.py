@@ -31,15 +31,20 @@ class AnimeBot:
 
         return content_dict
 
-    def choose_top10(self, media):
+    def choose_top10(self, media, genre = None):
         """
         This function choose top 10 serials or films
 
         :param media: table name in sql database(SERIALS or FILMS in my case)
         :return: list of sets
         """
-        sql_top10_query = text(f'SELECT * FROM \'{media}\''
-                               f'ORDER BY rating DESC LIMIT 10')  # sql query that give you top 10 serials/films from media
+        if genre:
+            sql_top_10_query = text(f'SELECT * FROM {media} '
+                                    f'WHERE genre LIKE \'%{genre}%\''
+                                    f'ORDER BY rating DESC LIMIT 10')
+        else:
+            sql_top10_query = text(f'SELECT * FROM \'{media}\''
+                                   f'ORDER BY rating DESC LIMIT 10')  # sql query that give you top 10 serials/films from media
 
         top10_content_list = self.connection.execute(sql_top10_query).fetchall()
         content_list = []
@@ -63,23 +68,6 @@ class AnimeBot:
         content_dict = content_to_dict(content)
 
         return content_dict
-
-    def choose_top10_by_genre(self, media, genre='Драма'):
-        """
-        Save as choose_top10, but you can also enter your genre
-        """
-        sql_top_10_query = text(f'SELECT * FROM {media} '
-                                f'WHERE genre LIKE \'%{genre}%\''
-                                f'ORDER BY rating DESC LIMIT 10')
-
-        top10_content_list = self.connection.execute(sql_top_10_query).fetchall()
-        content_list = []
-
-        for content_set in top10_content_list:
-            content_dict = content_to_dict(content_set)
-            content_list.append(content_dict)
-
-        return content_list
 
     def find_by_name(self, name_to_find):
         """
@@ -121,7 +109,6 @@ class AnimeBot:
 
 def content_to_dict(content: set) -> dict:
     # From set to dict
-    print(content)
     content_dict = {'name': content[1],
                     'link': content[2],
                     'genre': content[3],

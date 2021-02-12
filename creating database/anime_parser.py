@@ -42,21 +42,25 @@ def parse_site_page(url):
         link = a_tag.get('href')       # link on anime
 
         anime_request = get_request(link)
-        anime_soap = BeautifulSoup(anime_request, 'html.parser')
+        anime_soap = BeautifulSoup(anime_request, 'html.parser')    # html of anime page
 
         description = anime_soap.find('div', {'class': 'kino-desc full-text clearfix noselect'}).text.replace('\n', '')
+
         anime_ul = anime_soap.find('ul', {'class': 'kino-lines ignore-select'})
         ul_links = anime_ul.find_all('a')
         genre = ' '.join(a.text for a in ul_links if a.text in GENRES)
+
         rating = anime_soap.find('ul', {'class': 'unit-rating'}).find('li').text
+
         image_url = 'http://baza1.animevost.tv/' + anime_soap.find('a', {'class':'highslide'}).find('img').get('src')
+
         return_list.append({
-            'name':name,
-            'link':link,
-            'genre':genre,
-            'rating':rating,
-            'description':description,
-            'image':image_url
+            'name': name,
+            'link': link,
+            'genre': genre,
+            'rating': rating,
+            'description': description,
+            'image': image_url
         })
 
     return return_list
