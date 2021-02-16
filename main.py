@@ -23,35 +23,43 @@ class IsSerial:
 
 @dp.message_handler(commands=['start'])
 async def send_welcome(message,
-                       message_text='Привет \n' \
-                                    'Я телеграм бот, который поможет тебе с выбором аниме))\n\n' \
-                                    'Если нужна будет помощь, напиши /help'):
-    """
-    Welcome function
-    :param message_text: This text will be in bot`s message
-    :param message: message like in commands
-    """
+                       message_text='Ohayo ✌\n' \
+                                    'Я помогу тебе выборать аниме ✨\n\n' \
+                                    'Если хочешь найти его по названию, просто вбей его в чат ✎\n'
+                                    'Для вызова команд используй клавиатуру ниже ↡\n'
+                                    'Удачки)'):
     chat_id = message.from_user.id
     await bot.send_message(chat_id=chat_id, text=message_text, reply_markup=keyboards.StartKeyboard.keyboard)
+
+@dp.message_handler(lambda message: message.text[0:4] == '/sid')
+async def pattern_link(message):
+    chat_id = message.from_user.id
+
+    message_text = BOT_FUNCTIONS.choose_by_id('SERIALS', message.text)
+    message_text = content_to_html(message_text)
+
+    await bot.send_message(chat_id=chat_id, text=message_text, parse_mode='markdown')
+
+
+@dp.message_handler(lambda message: message.text[0:4] == '/fid')
+async def pattern_link(message):
+    chat_id = message.from_user.id
+
+    message_text = BOT_FUNCTIONS.choose_by_id('FILMS', message.text)
+    message_text = content_to_html(message_text)
+
+    await bot.send_message(chat_id=chat_id, text=message_text, parse_mode='markdown')
 
 
 @dp.message_handler(lambda message: message.text == f'⬅ Назад')
 async def back_to_start(message):
-    """
-    Returns user to the start keyboard
-    """
-    message_text = 'Хорошо'
+    message_text = '🦄 Временно отступаем, senpai'
     await send_welcome(message, message_text)
 
 
 @dp.message_handler(lambda message: message.text in ['Аниме сериалы', 'Аниме фильмы'])
 async def choose_media(message):
-    """
-    Choosing media function
-    :param message:
-    :return:
-    """
-    message_text = 'Хорошо, но что именно ты хочешь?'
+    message_text = 'Хорошо, давай выбирать дальше🤔'
     chat_id = message.from_user.id
 
     if message.text == 'Аниме сериалы':
@@ -83,7 +91,7 @@ async def random_anime(message):
 async def media_genres_keyboard(message):
     # Reply genre keyboard
 
-    message_text = 'Отлично, какой жанр ты предпочитаешь?'
+    message_text = 'Какой жанр предпочитаешь?'
     chat_id = message.from_user.id
 
     if message.text == 'Сериалы по жанрам':
@@ -139,7 +147,10 @@ async def top_media(message):
     message_text = ''
 
     for anime in content:
-        message_text += f'<a href=\'{anime["link"]}\'>{anime["name"]}</a>\n'
+        if IsSerial.bol:
+            message_text += f'▶{anime["name"]}(/sid{anime["id"]}) - {anime["rating"]}⭐\n'
+        else:
+            message_text += f'▶{anime["name"]}(/fid{anime["id"]}) - {anime["rating"]}⭐\n'
 
     await bot.send_message(chat_id=chat_id, text=message_text, parse_mode='html', disable_web_page_preview=True)
 
@@ -151,8 +162,9 @@ async def ongoins(message):
     chat_id = message.from_user.id
     content = BOT_FUNCTIONS.select_ongoins()
     message_text = ''
+
     for anime in content[:10]:
-        message_text += f'<a href=\'{anime["link"]}\'>{anime["name"]}</a>\n'
+        message_text += f'▶{anime["name"]}(/sid{anime["id"]}) - {anime["rating"]}⭐\n'
     await bot.send_message(chat_id=chat_id ,text=message_text, parse_mode='html', disable_web_page_preview=True)
 
 @dp.message_handler()

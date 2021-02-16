@@ -90,7 +90,7 @@ def filling_anons_table():
 
 
 if __name__ == '__main__':
-    # filling_serials_table()
-    # filling_films_table()
-    # filling_ongoings()
+    filling_serials_table()
+    filling_films_table()
+    filling_ongoings()
     filling_anons_table()

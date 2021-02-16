@@ -2,10 +2,12 @@ import requests
 from bs4 import BeautifulSoup
 
 GENRES = {'Боевые искусства', 'Война', 'Детектив', 'Драма', 'История', 'Киберпанк', 'Комедии', 'Махо-сёдзё',
-          'Меха', 'Мистика', 'Музыкальный', 'Пародии', 'Повседневность', 'Приключения', 'Романтика', 'Самураи' 
-          'Сёдзё', 'Сёдзё-ай', 'Сёнен', 'Сёнен-ай', 'Спорт', 'Триллер', 'Ужасы', 'Фантастика', 'Фэнтези', 'Школа',
+          'Меха', 'Мистика', 'Музыкальный', 'Пародии', 'Повседневность', 'Приключения', 'Романтика', 'Самураи'
+                                                                                                     'Сёдзё',
+          'Сёдзё-ай', 'Сёнен', 'Сёнен-ай', 'Спорт', 'Триллер', 'Ужасы', 'Фантастика', 'Фэнтези', 'Школа',
           'Текущие сезоны (Онгоинги)', 'Этти'
           }
+
 
 def get_request(url):
     """
@@ -36,13 +38,12 @@ def parse_site_page(url):
 
     return_list = []
     for div in div_tags:
-
         a_tag = div.find('a')
         name = a_tag.find('h2').text
-        link = a_tag.get('href')       # link on anime
+        link = a_tag.get('href')   # link on anime
 
         anime_request = get_request(link)
-        anime_soap = BeautifulSoup(anime_request, 'html.parser')    # html of anime page
+        anime_soap = BeautifulSoup(anime_request, 'html.parser')  # html of anime page
 
         description = anime_soap.find('div', {'class': 'kino-desc full-text clearfix noselect'}).text.replace('\n', '')
 
@@ -52,7 +53,7 @@ def parse_site_page(url):
 
         rating = anime_soap.find('ul', {'class': 'unit-rating'}).find('li').text
 
-        image_url = 'http://baza1.animevost.tv/' + anime_soap.find('a', {'class':'highslide'}).find('img').get('src')
+        image_url = 'http://baza1.animevost.tv/' + anime_soap.find('a', {'class': 'highslide'}).find('img').get('src')
 
         return_list.append({
             'name': name,
