@@ -4,94 +4,100 @@ All things bot can do are here
 
 from sqlalchemy import create_engine
 from sqlalchemy.sql import text
-
+from sqlalchemy import exc
 
 class AnimeBot:
     def __init__(self, database='sqlite:///animeTgBot.db'):
         self.engine = create_engine(database)
         self.connection = self.engine.connect()
 
-    def choose_random(self, media):
-        sql_content_query = text(f'SELECT * FROM \'{media}\''
-                                 f'ORDER BY RANDOM() LIMIT 1')  # sql query to choose random film or serial
+    def select_random_anime(self, media):
+        sql_content_query = text(f"""
+                                 SELECT * FROM {media}
+                                 ORDER BY RANDOM() LIMIT 1
+                                 """)
 
         content = self.connection.execute(sql_content_query).fetchone()
-        content_dict = content_to_dict(content)
 
-        return content_dict
+        return content_to_dict(content)
 
-    def choose_random_by_genre(self, media, genre='Комедии'):
-        sql_random_query = text(f'SELECT * FROM \'{media}\''
-                                f'WHERE genre LIKE \'%{genre}%\''
-                                f'ORDER BY RANDOM() LIMIT 1')
+    def select_random_by_genre(self, media, genre='Комедии'):
+        sql_content_query = text(f"""
+                                 SELECT * FROM {media}
+                                 WHERE genre LIKE '%{genre}%'
+                                 ORDER BY RANDOM() LIMIT 1
+                                  """)
 
-        content = self.connection.execute(sql_random_query).fetchone()
-        content_dict = content_to_dict(content)
+        content = self.connection.execute(sql_content_query).fetchone()
 
-        return content_dict
+        return content_to_dict(content)
 
-    def choose_top10(self, media, genre = None):
-        if genre:
-            sql_top_10_query = text(f'SELECT * FROM {media} '
-                                    f'WHERE genre LIKE \'%{genre}%\''
-                                    f'ORDER BY rating DESC LIMIT 10')
-        else:
-            sql_top10_query = text(f'SELECT * FROM \'{media}\''
-                                   f'ORDER BY rating DESC LIMIT 10')
+    def select_top10_anime(self, media):
+        sql_content_query = text(f"""
+                               SELECT * FROM {media}
+                               ORDER BY rating DESC LIMIT 10
+                               """)
 
-        top10_content_list = self.connection.execute(sql_top10_query).fetchall()
-        content_list = []
-
-        for content_set in top10_content_list:
-            content_dict = content_to_dict(content_set)
-            content_list.append(content_dict)
+        top10_content_list = self.connection.execute(sql_content_query).fetchall()
+        content_list = [content_to_dict(content_set) for content_set in top10_content_list]
 
         return content_list
 
-    def find_by_name(self, name_to_find):
-        sql_search_query = text(f'SELECT * FROM \'SERIALS\' '
-                                 f'WHERE UPPER(name) LIKE UPPER(\'%{name_to_find}%\')'
-                                 f'UNION '
-                                 f'SELECT * FROM \'FILMS\' '
-                                 f'WHERE UPPER(name) LIKE UPPER(\'%{name_to_find}%\')')
+    def select_by_name(self, name_to_find):
+        try:
+            sql_search_serials = text(f"""
+                                       SELECT * FROM SERIALS
+                                       WHERE upper(name) LIKE upper('%{name_to_find}%')
+                                       """)
 
-        content = self.connection.execute(sql_search_query).fetchall()
-        if content:
-            content_list = []
-            for anime in content:
-                content_dict = content_to_dict(anime)
-                content_list.append(content_dict)
-            return content_list
-        return 'Извини, не смог найти ничего похожего'
+            sql_search_films = text(f"""
+                                    SELECT * FROM FILMS
+                                    WHERE upper(name) LIKE upper('%{name_to_find}%')
+                                    """)
 
-    def select_ongoins(self):
-        sql_ongiongs_query = text(f'SELECT * FROM SERIALS '
-                                  f'WHERE genre is \'Текущие сезоны (Онгоинги)\'')
+            content_serials = self.connection.execute(sql_search_serials).fetchmany(10)
+            content_films = self.connection.execute(sql_search_films).fetchmany(10)
 
-        serial = self.connection.execute(sql_ongiongs_query).fetchall()
-        serials_list = []
-        for ser in serial:
-            serials_list.append(content_to_dict(ser))
+            if content_serials or content_films:
+                return content_serials + content_films
+            return None
 
-        return serials_list
+        except exc.OperationalError:
+            return None
 
-    def choose_by_id(self, media, id):
-        sql_query = text(f'SELECT * FROM {media} '
-                         f'WHERE id = \'{id[4:]}\'')
+    def select_ongoings(self):
+        sql_content_query = text(f"""
+                                 SELECT * FROM SERIALS
+                                 WHERE genre is 'Текущие сезоны (Онгоинги)'
+                                 """)
+        content = self.connection.execute(sql_content_query).fetchmany(10)
 
-        content = self.connection.execute(sql_query).fetchone()
-        content_dict = content_to_dict(content)
+        return [content_to_dict(anime) for anime in content]
 
-        return content_dict
+    def select_by_id(self, media, id):
+        sql_content_query = text(f"""
+                                 SELECT * FROM {media}
+                                 WHERE id = '{id[4:]}'
+                                 """)
+        content = self.connection.execute(sql_content_query).fetchone()
+
+        return content_to_dict(content)
+
+    def select_anons(self):
+        sql_content_query = text(f"""SELECT * FROM ANONS""")
+        content = self.connection.execute(sql_content_query).fetchall()
+
+        return [content_to_dict(anime) for anime in content]
 
 
 def content_to_dict(content: set) -> dict:
     content_dict = {'name': content[1],
-                    'link': content[2],
-                    'genre': content[3],
-                    'rating': content[4],
-                    'description': content[5],
-                    'image_url':content[6],
+                    'tag':content[2],
+                    'link': content[3],
+                    'genre': content[4],
+                    'rating': content[5],
+                    'description': content[6],
+                    'image_url':content[7],
                     'id':content[0]}
 
     return content_dict
@@ -107,3 +113,5 @@ def content_to_html(content: dict) -> str:
                 f'✍{content["description"][0:350] + "..."}\n'
     return html_text
 
+def content_to_html_short(anime):
+    return f'▶{anime["name"]}(/{anime["tag"]}id{anime["id"]}) - {anime["rating"]}⭐\n'

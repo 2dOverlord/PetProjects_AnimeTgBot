@@ -3,8 +3,9 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 class StartKeyboard:
     serials_btn = KeyboardButton('Аниме сериалы')
     films_btn = KeyboardButton('Аниме фильмы')
+    anons_btn = KeyboardButton('Анонсы')
 
-    keyboard = ReplyKeyboardMarkup(resize_keyboard=True).row(serials_btn, films_btn)
+    keyboard = ReplyKeyboardMarkup(resize_keyboard=True).row(anons_btn, serials_btn, films_btn)
 
 
 class FilmsKeyboard:
@@ -58,17 +59,15 @@ class SerialsKeyboard:
     back = KeyboardButton('⬅ Назад')
 
     genre_button = KeyboardButton('Сериалы по жанрам')
-    top_btn = KeyboardButton('Топ сериалов')
-
     ongoings = KeyboardButton('Онгоинги')
 
-    keyboard = ReplyKeyboardMarkup(resize_keyboard=True).row(back, random_btn).row(top_btn, genre_button).row(ongoings)
+    keyboard = ReplyKeyboardMarkup(resize_keyboard=True).row(back, random_btn).row(ongoings, genre_button)
 
 class SerialsGenresKeyboard:
     back_to_serials = KeyboardButton('Назад к аниме сериалам')
 
-    sedze = KeyboardButton('Сёдзё') # no in films
     seinen = KeyboardButton('Сёнен') # no in films
+    school = KeyboardButton('Школа')  # no in films
 
     arts = KeyboardButton('Боевые искусства')
     war = KeyboardButton('Война')
@@ -97,12 +96,11 @@ class SerialsGenresKeyboard:
     triller = KeyboardButton('Триллер')
     hrrbls = KeyboardButton('Ужасы')
 
-    school = KeyboardButton('Школа') # no in films
 
-    keyboard = ReplyKeyboardMarkup(resize_keyboard=True).row(back_to_serials).row(sedze, seinen) \
+    keyboard = ReplyKeyboardMarkup(resize_keyboard=True).row(back_to_serials).row(school, seinen) \
                                                         .row(arts, war).row(detectiv, drama)\
                                                         .row(cyber_punk, meha).row(fantastic, history)\
                                                         .row(mystic, fantasy).row(everydaying, musicial)\
                                                         .row(romantic, comedy).row(sport, advanture)\
-                                                        .row(triller, hrrbls).row(school)
+                                                        .row(triller, hrrbls)
 
