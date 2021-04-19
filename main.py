@@ -19,11 +19,10 @@ class IsSerial:
 
 @dp.message_handler(commands=['start'])
 async def send_welcome(message,
-                       message_text='Ohayo ✌\n'
-                                    'Я помогу тебе выборать аниме ✨\n\n' 
+                       message_text='Привет ✌\n'
+                                    'Я помогу тебе выборать японские фильмы и сериалы\n\n' 
                                     'Если хочешь найти его по названию, просто вбей его в чат ✎\n'
-                                    'Для вызова команд используй клавиатуру ниже ↡\n'
-                                    'Удачки)'):
+                                    'Для вызова команд используй клавиатуру ниже ↡\n'):
 
     chat_id = message.from_user.id
 
@@ -34,7 +33,7 @@ async def send_anime_by_id(message):
     """
     This function find anime by its id in database
     Id looks like /sid21
-    /sid is for serials, /fid is for films
+    /sid is for serials, /fid is for films, /aid for anons
     """
     chat_id = message.from_user.id
 
@@ -51,7 +50,7 @@ async def send_anime_by_id(message):
 
 @dp.message_handler(lambda message: message.text == f'⬅ Назад')
 async def back_to_start_keyboard(message):
-    message_text = '🦄 Временно отступаем, senpai'
+    message_text = 'Временно отступаем'
 
     await send_welcome(message, message_text)
 
@@ -68,7 +67,7 @@ async def send_anons(message):
 @dp.message_handler(lambda message: message.text in ['Аниме сериалы', 'Аниме фильмы'])
 async def choose_media(message):
     """
-    This function call when user choose between Serials or Films
+    This function calls when user choose between Serials or Films
     """
 
     chat_id = message.from_user.id
@@ -171,7 +170,7 @@ async def send_ongoings(message):
     content = BOT_FUNCTIONS.select_ongoings()
     message_text = ''.join(content_to_html_short(anime) for anime in content)
 
-    await bot.send_message(chat_id=chat_id ,text=message_text, parse_mode='html', disable_web_page_preview=True)
+    await bot.send_message(chat_id=chat_id ,text=message_text ,parse_mode='html', disable_web_page_preview=True)
 
 @dp.message_handler()
 async def send_anime_by_search(message):

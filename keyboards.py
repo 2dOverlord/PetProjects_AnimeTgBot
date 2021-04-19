@@ -1,5 +1,5 @@
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
-
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup
+from aiogram.utils.callback_data import CallbackData
 class StartKeyboard:
     serials_btn = KeyboardButton('Аниме сериалы')
     films_btn = KeyboardButton('Аниме фильмы')
@@ -103,4 +103,6 @@ class SerialsGenresKeyboard:
                                                         .row(mystic, fantasy).row(everydaying, musicial)\
                                                         .row(romantic, comedy).row(sport, advanture)\
                                                         .row(triller, hrrbls)
+
+
 
